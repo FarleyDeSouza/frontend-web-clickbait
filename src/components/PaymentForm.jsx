@@ -56,7 +56,7 @@ export default function PaymentForm() {
     console.log("📤 Enviando payload:", payload);
 
     try {
-      await axios.post("http://localhost:8080/api/v1/payments", payload);
+      await axios.post("74.220.48.0/24/api/v1/payments", payload);
       setMessage("✅ Pagamento processado com sucesso!");
     } catch (err) {
       console.error("❌ Erro ao processar pagamento:", err.response?.data || err);
