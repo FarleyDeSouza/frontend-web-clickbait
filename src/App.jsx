@@ -1,12 +1,18 @@
-import React from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import Login from "./components/Login";
 import PaymentForm from "./components/PaymentForm";
+import Register from "./components/Register";
 
-function App() {
+export default function App() {
   return (
-    <div className="container">
-      <PaymentForm />
-    </div>
+    <Router>
+      <div className="app">
+        <Routes>
+          <Route path="/payment" element={<PaymentForm />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
-
-export default App;
