@@ -1,0 +1,463 @@
+{
+  "apiName": "Clickbait Pedidos API",
+  "version": "1.0.0",
+  "description": "Microservice para gerenciamento de pedidos do Clickbait",
+  "baseUrl": "http://localhost/api",
+  "endpoints": [
+    {
+      "id": 1,
+      "method": "GET",
+      "path": "/health",
+      "name": "Health Check",
+      "description": "Verifica o status de saúde da API para orquestração de containers",
+      "parameters": [],
+      "requestBody": null,
+      "response": {
+        "statusCode": 200,
+        "contentType": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "healthy"
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2025-12-04T10:30:00Z"
+            }
+          }
+        }
+      },
+      "tags": ["Health"]
+    },
+    {
+      "id": 2,
+      "method": "GET",
+      "path": "/pedidos",
+      "name": "Listar Todos os Pedidos",
+      "description": "Retorna uma lista paginada de todos os pedidos, com opção de filtrar por cliente",
+      "parameters": [
+        {
+          "name": "clienteId",
+          "in": "query",
+          "type": "string",
+          "required": false,
+          "description": "ID do cliente para filtrar pedidos",
+          "example": "123"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "type": "integer",
+          "required": false,
+          "default": 1,
+          "description": "Número da página",
+          "example": 1
+        },
+        {
+          "name": "pageSize",
+          "in": "query",
+          "type": "integer",
+          "required": false,
+          "default": 10,
+          "description": "Quantidade de itens por página",
+          "example": 10
+        }
+      ],
+      "requestBody": null,
+      "response": {
+        "statusCode": 200,
+        "contentType": "application/json",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "507f1f77bcf86cd799439011"
+              },
+              "clienteId": {
+                "type": "string",
+                "example": "123"
+              },
+              "dataCriacao": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["pendente", "confirmado", "enviado", "entregue", "cancelado"]
+              }
+            }
+          }
+        }
+      },
+      "tags": ["Pedidos"]
+    },
+    {
+      "id": 3,
+      "method": "GET",
+      "path": "/pedidos/historico",
+      "name": "Histórico de Pedidos (Compatibilidade)",
+      "description": "Retorna o histórico de pedidos do cliente (rota de compatibilidade)",
+      "parameters": [
+        {
+          "name": "clienteId",
+          "in": "query",
+          "type": "string",
+          "required": false,
+          "description": "ID do cliente",
+          "example": "123"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "type": "integer",
+          "required": false,
+          "default": 1,
+          "description": "Número da página",
+          "example": 1
+        },
+        {
+          "name": "pageSize",
+          "in": "query",
+          "type": "integer",
+          "required": false,
+          "default": 10,
+          "description": "Quantidade de itens por página",
+          "example": 10
+        }
+      ],
+      "requestBody": null,
+      "response": {
+        "statusCode": 200,
+        "contentType": "application/json",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "tags": ["Pedidos"]
+    },
+    {
+      "id": 4,
+      "method": "GET",
+      "path": "/pedidos/{id}",
+      "name": "Obter Pedido por ID",
+      "description": "Retorna os detalhes de um pedido específico pelo seu ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "required": true,
+          "description": "ID do pedido",
+          "example": "507f1f77bcf86cd799439011"
+        }
+      ],
+      "requestBody": null,
+      "response": {
+        "statusCode": 200,
+        "contentType": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            },
+            "clienteId": {
+              "type": "string",
+              "example": "123"
+            },
+            "dataCriacao": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "status": {
+              "type": "string"
+            }
+          }
+        },
+        "errorResponse": {
+          "statusCode": 404,
+          "description": "Pedido não encontrado"
+        }
+      },
+      "tags": ["Pedidos"]
+    },
+    {
+      "id": 5,
+      "method": "POST",
+      "path": "/pedidos",
+      "name": "Criar Novo Pedido",
+      "description": "Cria um novo pedido no sistema",
+      "parameters": [],
+      "requestBody": {
+        "required": true,
+        "contentType": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "clienteId": {
+              "type": "string",
+              "example": "123"
+            },
+            "itens": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "produtoId": {
+                    "type": "string"
+                  },
+                  "quantidade": {
+                    "type": "integer"
+                  },
+                  "preco": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "endereco": {
+              "type": "object",
+              "properties": {
+                "rua": {
+                  "type": "string"
+                },
+                "numero": {
+                  "type": "string"
+                },
+                "cidade": {
+                  "type": "string"
+                },
+                "estado": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": ["clienteId"]
+        }
+      },
+      "response": {
+        "statusCode": 201,
+        "contentType": "application/json",
+        "description": "Pedido criado com sucesso",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            },
+            "clienteId": {
+              "type": "string"
+            },
+            "dataCriacao": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      },
+      "tags": ["Pedidos"]
+    },
+    {
+      "id": 6,
+      "method": "PUT",
+      "path": "/pedidos/{id}",
+      "name": "Atualizar Pedido",
+      "description": "Atualiza os dados de um pedido existente",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "required": true,
+          "description": "ID do pedido",
+          "example": "507f1f77bcf86cd799439011"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "contentType": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "clienteId": {
+              "type": "string"
+            },
+            "itens": {
+              "type": "array"
+            },
+            "endereco": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "response": {
+        "statusCode": 204,
+        "description": "Pedido atualizado com sucesso",
+        "errorResponses": [
+          {
+            "statusCode": 404,
+            "description": "Pedido não encontrado"
+          }
+        ]
+      },
+      "tags": ["Pedidos"]
+    },
+    {
+      "id": 7,
+      "method": "DELETE",
+      "path": "/pedidos/{id}",
+      "name": "Deletar Pedido",
+      "description": "Remove um pedido do sistema",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "required": true,
+          "description": "ID do pedido",
+          "example": "507f1f77bcf86cd799439011"
+        }
+      ],
+      "requestBody": null,
+      "response": {
+        "statusCode": 204,
+        "description": "Pedido deletado com sucesso",
+        "errorResponses": [
+          {
+            "statusCode": 404,
+            "description": "Pedido não encontrado"
+          }
+        ]
+      },
+      "tags": ["Pedidos"]
+    },
+    {
+      "id": 8,
+      "method": "PATCH",
+      "path": "/pedidos/{id}/status",
+      "name": "Atualizar Status do Pedido",
+      "description": "Atualiza apenas o status de um pedido existente",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "required": true,
+          "description": "ID do pedido",
+          "example": "507f1f77bcf86cd799439011"
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "contentType": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["pendente", "confirmado", "enviado", "entregue", "cancelado"],
+              "example": "confirmado"
+            }
+          },
+          "required": ["status"]
+        }
+      },
+      "response": {
+        "statusCode": 204,
+        "description": "Status do pedido atualizado com sucesso",
+        "errorResponses": [
+          {
+            "statusCode": 404,
+            "description": "Pedido não encontrado"
+          }
+        ]
+      },
+      "tags": ["Pedidos"]
+    }
+  ],
+  "models": {
+    "Pedido": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID único do pedido (MongoDB ObjectId)"
+        },
+        "clienteId": {
+          "type": "string",
+          "description": "ID do cliente que fez o pedido"
+        },
+        "dataCriacao": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Data e hora de criação do pedido"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pendente", "confirmado", "enviado", "entregue", "cancelado"],
+          "description": "Status atual do pedido"
+        },
+        "itens": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Itens do pedido"
+        },
+        "endereco": {
+          "type": "object",
+          "description": "Endereço de entrega"
+        }
+      }
+    },
+    "StatusPedido": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pendente", "confirmado", "enviado", "entregue", "cancelado"]
+        }
+      },
+      "required": ["status"]
+    }
+  },
+  "statusCodes": {
+    "200": {
+      "description": "Requisição bem-sucedida",
+      "message": "OK"
+    },
+    "201": {
+      "description": "Recurso criado com sucesso",
+      "message": "Created"
+    },
+    "204": {
+      "description": "Requisição bem-sucedida, sem conteúdo",
+      "message": "No Content"
+    },
+    "404": {
+      "description": "Recurso não encontrado",
+      "message": "Not Found"
+    },
+    "400": {
+      "description": "Requisição inválida",
+      "message": "Bad Request"
+    },
+    "500": {
+      "description": "Erro interno do servidor",
+      "message": "Internal Server Error"
+    }
+  }
+}
