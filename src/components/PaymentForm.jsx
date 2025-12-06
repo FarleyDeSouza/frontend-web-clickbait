@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import "./PaymentForm.css";
 
 export default function PaymentForm() {
+  const location = useLocation();
+  const { orderId: initialOrderId, amount: initialAmount } = location.state || {};
+
   const [formData, setFormData] = useState({
-    orderId: "",
-    amount: "",
+    orderId: initialOrderId || "",
+    amount: initialAmount || "",
     paymentMethod: "PIX",
     paymentDetails: {}
   });
@@ -85,6 +89,8 @@ export default function PaymentForm() {
               value={formData.orderId}
               onChange={handleChange}
               required
+              readOnly={!!initialOrderId}
+              style={initialOrderId ? { backgroundColor: '#333', color: '#888' } : {}}
             />
 
             <label>Valor</label>
@@ -94,6 +100,8 @@ export default function PaymentForm() {
               value={formData.amount}
               onChange={handleChange}
               required
+              readOnly={!!initialAmount}
+              style={initialAmount ? { backgroundColor: '#333', color: '#888' } : {}}
             />
 
             <label>Método</label>

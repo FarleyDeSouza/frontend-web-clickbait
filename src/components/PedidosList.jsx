@@ -57,9 +57,6 @@ export default function PedidosList({ onSelectPedido, onCreateNew }) {
     <div className="pedidos-list-container">
       <div className="pedidos-header">
         <h2>📦 Meus Pedidos</h2>
-        <button className="btn-criar" onClick={onCreateNew}>
-          ➕ Novo Pedido
-        </button>
       </div>
 
       <div className="filtros-container">
@@ -73,7 +70,7 @@ export default function PedidosList({ onSelectPedido, onCreateNew }) {
           }}
           className="filtro-input"
         />
-        
+
         <select
           value={filtroStatus}
           onChange={(e) => setFiltroStatus(e.target.value)}
@@ -95,9 +92,6 @@ export default function PedidosList({ onSelectPedido, onCreateNew }) {
       ) : pedidosFiltrados.length === 0 ? (
         <div className="empty-state">
           <p>Nenhum pedido encontrado</p>
-          <button onClick={onCreateNew} className="btn-criar">
-            Criar Primeiro Pedido
-          </button>
         </div>
       ) : (
         <div className="pedidos-grid">

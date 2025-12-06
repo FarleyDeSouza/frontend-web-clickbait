@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import api from '../services/api'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import './Login-Register.css'
 
 export default function Login() {
@@ -8,14 +9,17 @@ export default function Login() {
   const [message, setMessage] = useState(null)
   const [loading, setLoading] = useState(false)
 
+  const { login } = useAuth()
+  const navigate = useNavigate()
+
   async function handleSubmit(e) {
     e.preventDefault()
     setMessage(null)
     setLoading(true)
 
     try {
-      const res = await api.post('/api/auth/login', { email, senha })
-      setMessage(res.data?.message || '✅ Login bem-sucedido!')
+      await login(email, senha)
+      navigate('/pedidos')
     } catch (err) {
       setMessage(err.response?.data?.message || '❌ Erro ao efetuar login')
     } finally {
@@ -23,7 +27,7 @@ export default function Login() {
     }
   }
 
-    return (
+  return (
     <div className="page-container">
       {/* Cabeçalho */}
       <header className="header">
